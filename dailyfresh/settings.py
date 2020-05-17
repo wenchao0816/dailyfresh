@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'tinymce',
     'apps.user',
     'apps.order',
     'apps.goods',
@@ -129,3 +130,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIR = ({BASE_DIR, 'static'})
+
+TINYMCE_DEFAULT_CONFIG = {
+    'theme':'advanced',
+    'width':600,
+    'height':400
+}
