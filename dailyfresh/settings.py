@@ -10,11 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
-import os
+import os, sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+# sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -91,6 +91,10 @@ DATABASES = {
 }
 
 
+# django认证系统使用的模型类
+AUTH_USER_MODEL = 'user.User'
+
+
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
@@ -129,7 +133,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIR = ({BASE_DIR, 'static'})
+STATICFILES_DIR = (os.path.join(BASE_DIR, 'apps/goods/static'))
 
 TINYMCE_DEFAULT_CONFIG = {
     'theme':'advanced',

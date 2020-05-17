@@ -13,16 +13,16 @@ class GoodsSPU(BaseModel):
         verbose_name_plural = verbose_name
 
 class GoodsSKU(BaseModel):
-    STATUS_CHOICES = {'1': '上架', '0': '下架'}
+    STATUS_CHOICES = (('1', '上架'), ('0', '下架'))
 
     goods_name = models.CharField(max_length=20, verbose_name='商品名称')
     brief = models.CharField(max_length=50, verbose_name='简介')
-    price = models.DecimalField(decimal_places=2, verbose_name='价格')
-    unit = models.CharField(verbose_name='单位')
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='价格')
+    unit = models.CharField(max_length=10, verbose_name='单位')
     stock = models.FloatField(verbose_name='库存')
-    sales_volume = models.IntegerField(verbose_name='销量')
+    sales_volume = models.IntegerField(default=0, verbose_name='销量')
     pictures = models.CharField(max_length=50, verbose_name='图片')
-    status = models.SmallIntegerField(default=1,choices=STATUS_CHOICES, verbose_name='商品状态')
+    status = models.SmallIntegerField(default=1, choices=STATUS_CHOICES, verbose_name='商品状态')
     kinds = models.ForeignKey('GoodsKinds', verbose_name='商品种类', on_delete= models.CASCADE)
     SPU_id = models.ForeignKey('GoodsSKU', on_delete=models.CASCADE)
 
@@ -40,6 +40,9 @@ class GoodsKinds(BaseModel):
         db_table = 'df_goods_kinds'
         verbose_name = '商品种类表'
         verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.name
 
 class GoodsImages(BaseModel):
     images = models.ImageField(upload_to='goods', verbose_name='商品图片')
