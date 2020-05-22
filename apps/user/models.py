@@ -1,11 +1,9 @@
 from django.db import models
 from db.base_model import BaseModel
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
-class User(AbstractBaseUser, BaseModel):
-    identifier = models.CharField(max_length=40, unique=True)
-    USERNAME_FIELD = 'identifier'
+class User(AbstractUser, BaseModel):
 
     class Meta:
         db_table = 'df_user'
