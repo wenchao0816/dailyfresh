@@ -56,16 +56,35 @@ class GoodsImages(BaseModel):
 class GoodsIndexImages(BaseModel):
     images = models.ImageField(upload_to='goods', verbose_name='轮播图片')
     index = models.IntegerField(verbose_name='图片序号')
+    sku = models.ForeignKey('GoodsSKU', on_delete=models.CASCADE, default=1, verbose_name='商品')
 
     class Meta:
         db_table = 'df_goods_index_images'
         verbose_name = '轮播图片表'
         verbose_name_plural = verbose_name
 
+class IndexTypeGoodsBanner(BaseModel):
+    DISPLAY_TYPE_CHOICES = (
+        (0, "标题"),
+        (1, "图片")
+    )
+
+    kinds = models.ForeignKey('GoodsKinds', verbose_name='商品类型', on_delete=models.CASCADE)
+    sku = models.ForeignKey('GoodsSKU', verbose_name='商品SKU', on_delete=models.CASCADE)
+    display_type = models.SmallIntegerField(default=1, choices=DISPLAY_TYPE_CHOICES, verbose_name='展示类型')
+    index = models.SmallIntegerField(default=0, verbose_name='展示顺序')
+
+    class Meta:
+        db_table = 'df_index_type_goods'
+        verbose_name = "主页分类展示商品"
+        verbose_name_plural = verbose_name
+
+
 class GoodsActiveImages(BaseModel):
     active_name = models.CharField(max_length=50, verbose_name='活动名称')
     active_images = models.ImageField(upload_to='goods', verbose_name='活动图片')
     active_link = models.CharField(max_length=128, verbose_name='活动链接')
+    index = models.SmallIntegerField(default=0, verbose_name='展示顺序')
 
     class Meta:
         db_table = 'df_goods_active_images'
