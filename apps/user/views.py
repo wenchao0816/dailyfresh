@@ -62,9 +62,7 @@ class RegisterView(View):
         #            '<a href=\'http://127.0.0.1:8000/user/active/%s\'>' \
         #            'http://127.0.0.1:8000/user/active/%s<a>' % (username, res, res)
         # send_mail(subject, message, sender, email, html_message=html_msg)
-
         send_register_active_email.delay(email, username, res)
-
         # 返回应答
         return redirect(reverse('goods:index'))
 

@@ -82,7 +82,7 @@ $(function(){
 		if(nowli<0)
 		{
 			nowli=len-1;
-			prevli = 0
+			prevli = 0;
 			$slides.eq(nowli).css({left:-760});
 			$slides.eq(nowli).animate({left:0},800,'easeOutExpo');
 			$slides.eq(prevli).animate({left:760},800,'easeOutExpo',function(){
@@ -127,4 +127,4 @@ $(function(){
 		}
 
 	}
-})
+});

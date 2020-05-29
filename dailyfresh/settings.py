@@ -159,7 +159,7 @@ EMAIL_FROM = '天天生鲜<wenchao2815@126.com>'
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": "redis://192.168.44.128:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
@@ -170,4 +170,14 @@ CACHES = {
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
 
+# 登录提交路径
 LOGIN_URL = '/user/login'
+
+# FastDFS的配置文件地址
+CLIENT_CONF_PATH = './utils/fastdfs/client.conf'
+
+# FastDFS服务器连接的nginx的地址
+URL_IP = 'http://192.168.44.128:8888'
+
+# 设置图片的默认上传处理类
+DEFAULT_FILE_STORAGE = 'utils.fastdfs.storage.FDFSStorage'
