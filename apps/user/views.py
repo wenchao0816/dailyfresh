@@ -16,6 +16,7 @@ import re
 
 # Create your views here.
 
+
 class RegisterView(View):
 
     def get(self, request):
@@ -66,6 +67,7 @@ class RegisterView(View):
         # 返回应答
         return redirect(reverse('goods:index'))
 
+
 class ActiveView(View):
     # 验证用户信息并激活
     def get(self, request, token):
@@ -78,6 +80,7 @@ class ActiveView(View):
             return redirect(reverse('goods:index'))
         except:
             pass
+
 
 class LoginView(View):
     def get(self, request):
@@ -102,7 +105,7 @@ class LoginView(View):
                 response = redirect(next_url)
                 rem = request.POST.get('remember')
                 if rem:
-                    response.set_cookie('username', username, max_age=7*24*3600)
+                    response.set_cookie('username', username, max_age=24*3600)
                 else:
                     response.delete_cookie('username')
                 return response
@@ -128,6 +131,7 @@ class UserCenterInfo(LoginRequiredMixin, View):
         history_val = con.lrange(history_key, 0, 4)
         goods_li = [GoodsSKU.objects.get(id=index) for index in history_val]
         return render(request, 'user/user_center_info.html', {'page': 'user', 'address': address, 'goods_li': goods_li})
+
 
 class UserCenterOrder(LoginRequiredMixin, View):
     def get(self, request):

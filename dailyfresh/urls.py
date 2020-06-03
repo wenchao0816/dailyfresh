@@ -20,7 +20,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('tinymce', include('tinymce.urls'),),
     path('user/', include(('apps.user.urls', 'apps.user'), namespace='user')),
-    path('goodcar/', include(('apps.goodscar.urls', 'apps.goodscar'), namespace='goodcar')),
+    path('goodscar/', include(('apps.goodscar.urls', 'apps.goodscar'), namespace='goodscar')),
     path('order/', include(('apps.order.urls', 'apps.order'), namespace='order')),
     path('', include(('apps.goods.urls', 'apps.goods'), namespace='goods')),
 ]

@@ -21,6 +21,7 @@ def send_register_active_email(to_email, username, token):
                'http://127.0.0.1:8000/user/active/%s<a>' % (username, token, token)
     send_mail(subject, message, sender, email, html_message=html_msg)
 
+@app.task
 def generate_static_index_html():
     kinds = models.GoodsKinds.objects.all()
     goods_index_images = models.GoodsIndexImages.objects.all().order_by('index')

@@ -1,10 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.views.generic import View
 from django.core.cache import cache
 from apps.goods import models
+from utils.mixin import LoginRequiredMixin
 from django_redis import get_redis_connection
 
 # Create your views here.
+
 
 class IndexView(View):
 
@@ -37,3 +40,22 @@ class IndexView(View):
             cart_count = conn.hlen(cart_key)
         content['cart_count'] = cart_count
         return render(request, 'goods/index.html', content)
+
+
+class DetailsView(View):
+
+    def get(self, request, gid):
+        goods = models.GoodsSKU.objects.get(id=gid)
+        other_goods = models.GoodsSKU.objects.filter(kinds=goods.kinds).order_by('sales_volume')[:2]
+        return render(request, 'goods/detail.html', {'goods': goods, 'other_goods': other_goods})
+
+
+class AddCartView(LoginRequiredMixin, View):
+
+    def get(self, request, gid):
+        user = request.user
+        gname = models.GoodsSKU.objects.get(id=gid)
+        cart_key = 'cart_key_%d' % user.id
+        conn = get_redis_connection('default')
+        conn.hset(cart_key, gname.goods_name, gid)
+        return redirect(reverse('goods:detail', kwargs={'gid': gid}))
