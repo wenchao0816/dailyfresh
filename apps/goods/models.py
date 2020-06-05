@@ -26,7 +26,7 @@ class GoodsSKU(BaseModel):
     sales_volume = models.IntegerField(default=0, verbose_name='销量')
     pictures = models.ImageField(upload_to='goods', verbose_name='图片')
     status = models.SmallIntegerField(default=1, choices=STATUS_CHOICES, verbose_name='商品状态')
-    kinds = models.ForeignKey('GoodsKinds', verbose_name='商品种类', on_delete= models.CASCADE)
+    kinds = models.ForeignKey('GoodsKinds', verbose_name='商品种类', on_delete=models.CASCADE)
     SPU_id = models.ForeignKey('GoodsSPU', on_delete=models.CASCADE)
 
     def __str__(self):

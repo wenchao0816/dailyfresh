@@ -1,38 +1,13 @@
-{% extends 'base/base_details.html' %}
+{% extends 'base/base.html' %}
 {% load static %}
 {% block body %}
-	<div class="navbar_con">
-		<div class="navbar clearfix">
-			<div class="subnav_con fl">
-				<h1>全部商品分类</h1>	
-				<span></span>			
-				<ul class="subnav">
-					<li><a href="#" class="fruit">新鲜水果</a></li>
-					<li><a href="#" class="seafood">海鲜水产</a></li>
-					<li><a href="#" class="meet">猪牛羊肉</a></li>
-					<li><a href="#" class="egg">禽类蛋品</a></li>
-					<li><a href="#" class="vegetables">新鲜蔬菜</a></li>
-					<li><a href="#" class="ice">速冻食品</a></li>
-				</ul>
-			</div>
-			<ul class="navlist fl">
-				<li><a href={% url 'goods:index' %}>首页</a></li>
-				<li class="interval">|</li>
-				<li><a href="">手机生鲜</a></li>
-				<li class="interval">|</li>
-				<li><a href="">抽奖</a></li>
-			</ul>
-		</div>
-	</div>
-
 	<div class="breadcrumb">
 		<a href="#">全部分类</a>
 		<span>></span>
-		<a href="#">新鲜水果</a>
+		<a href="{% url 'goods:goods_list' goods.kinds_id %}">{{ goods.kinds.name }}</a>
 		<span>></span>
 		<a href="#">商品详情</a>
 	</div>
-
 	<div class="goods_detail_con clearfix">
 		<div class="goods_detail_pic fl"><img src={{ goods.pictures.url }}></div>
 
@@ -43,19 +18,19 @@
 				<span class="show_pirze">¥<em>{{ goods.price }}</em></span>
 				<span class="show_unit">单  位：{{ goods.unit }}</span>
 			</div>
-			<div class="goods_num clearfix">
-				<div class="num_name fl">数 量：</div>
-				<div class="num_add fl">
-					<input type="text" class="num_show fl" value="1">
-					<a href="javascript:;" class="add fr">+</a>
-					<a href="javascript:;" class="minus fr">-</a>	
-				</div> 
-			</div>
-			<div class="total">总价：<em>16.80元</em></div>
-			<div class="operate_btn">
-				<a href="javascript:;" class="buy_btn">立即购买</a>
-				<a href="{% url 'goodscar:addcart' goods.id%}" class="add_cart" id="add_cart">加入购物车</a>
-			</div>
+            <div class="goods_num clearfix">
+                <div class="num_name fl">数 量：</div>
+                <div class="num_add fl">
+                    <input type="text" class="num_show fl" value="1">
+                    <a href="javascript:;" class="add fr">+</a>
+                    <a href="javascript:;" class="minus fr">-</a>
+                </div>
+            </div>
+            <div class="total">总价：<em>16.80元</em></div>
+            <div class="operate_btn">
+                <a href="javascript:;" class="buy_btn">立即购买</a>
+                <a href="{% url 'goodscar:addcart' goods.id%}" class="add_cart" id="add_cart">加入购物车</a>
+            </div>
 		</div>
 	</div>
 
@@ -92,6 +67,7 @@
 		</div>
 	</div>
 {% endblock body %}
+
 {% block bottom_files %}
 	<div class="add_jump"></div>
 

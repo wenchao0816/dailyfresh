@@ -5,6 +5,9 @@
 	<script type="text/javascript" src={% static 'js/jquery-ui.min.js'%}></script>
 	<script type="text/javascript" src={% static 'js/slide.js'%}></script>
 {% endblock jsfiles %}
+
+{% block body_on %}{% endblock body_on %}
+
 {% block body %}
 	<div class="navbar_con">
 		<div class="navbar">
@@ -51,7 +54,7 @@
                             <a href={% url 'goods:detail' gid=image.sku.id %}>{{ image.sku.goods_name }}</a>
                         {% endfor %}
                     </div>
-                <a href="#" class="goods_more fr" id="fruit_more">查看更多 ></a>
+                <a href="{% url 'goods:goods_list' kind.id %}" class="goods_more fr" id="fruit_more">查看更多 ></a>
             </div>
 
             <div class="goods_con clearfix">

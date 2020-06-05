@@ -105,7 +105,7 @@ class LoginView(View):
                 response = redirect(next_url)
                 rem = request.POST.get('remember')
                 if rem:
-                    response.set_cookie('username', username, max_age=24*3600)
+                    response.set_cookie('username', username, max_age=60)
                 else:
                     response.delete_cookie('username')
                 return response

@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import View
-from django_redis import get_redis_connection
 from utils.mixin import LoginRequiredMixin
-from apps.goods import models
+from apps.goods.models import GoodsKinds, GoodsSKU
+from utils.redis_connect import HashRedisConnect
 
 # Create your views here.
 
@@ -11,34 +11,35 @@ from apps.goods import models
 class AddCartView(LoginRequiredMixin, View):
 
     def get(self, request, gid):
-        user = request.user
-        gname = models.GoodsSKU.objects.get(id=gid)
-        cart_key = 'cart_key_%d' % user.id
-        conn = get_redis_connection('default')
-        conn.hset(cart_key, gname.id, gid)
+        conn = HashRedisConnect(request.user)
+        if conn.get_cart(gid):
+            # #TODO 后期处理
+            pass
+        else:
+            conn.set_cart(gid, gid)
         return redirect(reverse('goods:detail', kwargs={'gid': gid}))
 
 
 class CartView(LoginRequiredMixin, View):
 
     def get(self, request):
-        user = request.user
-        cart_key = 'cart_key_%d' % user.id
-        conn = get_redis_connection('default')
-        goods = conn.hgetall(cart_key)
+        kinds = GoodsKinds.objects.all()
+        goods = HashRedisConnect(request.user).get_all_cart()
         goods_li = list()
         for unit_goods in goods:
-            unit_goods = unit_goods.decode()
-            goods_details = models.GoodsSKU.objects.get(goods_name=unit_goods)
+            goods_details = GoodsSKU.objects.get(id=unit_goods)
+            goods_details.num = goods[unit_goods].decode()
             goods_li.append(goods_details)
-        return render(request, 'goodscar/cart.html', {'goods_li': goods_li, 'goods_dic': goods})
+        context = {
+            'goods_li': goods_li,
+            'length': len(goods_li),
+            'kinds': kinds
+        }
+        return render(request, 'goodscar/cart.html', context)
 
 
-class CartDeleteView(View):
+class CartDeleteView(LoginRequiredMixin, View):
 
-    def get(self, request, name):
-        user = request.user
-        cart_key = 'cart_key_%d' % user.id
-        conn = get_redis_connection('default')
-        conn.hdel(cart_key, name)
+    def get(self, request, goods_id):
+        HashRedisConnect(request.user).del_cart(goods_id)
         return redirect(reverse('goodscar:cart'))

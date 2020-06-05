@@ -169,6 +169,7 @@ CACHES = {
 # 配置session存储
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
+SESSION_COOKIE_AGE = 12*3600
 
 # 登录提交路径
 LOGIN_URL = '/user/login'

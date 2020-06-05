@@ -6,9 +6,7 @@
 				<div class="site_con">
 					<dl>
                         {% if address %}
-                            {% for addr in address %}
-					    	    <dd><input type="radio" name="only" checked>&nbsp&nbsp{{ addr.addr }} （{{ addr.receiver }} 收） {{ addr.phone }}</dd>
-                            {% endfor %}
+                            <dd><input type="radio" name="only" checked>&nbsp&nbsp{{ address.addr }} （{{ address.receiver }} 收） {{ address.phone }}</dd>
                         {% else %}
                             <dd>未保存收货地址！</dd>
                         {% endif %}
