@@ -33,7 +33,11 @@
 					<span>|</span>
 					<a href="{% url 'goodscar:cart' %}">我的购物车</a>
 					<span>|</span>
+<<<<<<< HEAD
 					<a href="{% url 'user:order' 1 %}">我的订单</a>
+=======
+					<a href="{% url 'user:order' %}">我的订单</a>
+>>>>>>> origin/dev
 				</div>
 			</div>
 		</div>		
@@ -44,10 +48,15 @@
 	<div class="search_bar clearfix">
 		<a href="{% url 'goods:index' %}" class="logo fl"><img alt="logo" src={% static 'images/logo.png'%}></a>
 		<div class="search_con fl">
+<<<<<<< HEAD
             <form action="/search" method="get">
                 <input type="text" class="input_text fl" name="q" placeholder="搜索商品">
                 <input type="submit" class="input_btn fr" name="" value="搜索">
             </form>
+=======
+			<input type="text" class="input_text fl" name="" placeholder="搜索商品">
+			<input type="button" class="input_btn fr" name="" value="搜索">
+>>>>>>> origin/dev
 		</div>
 		<div class="guest_cart fr">
 			<a href="{% url 'goodscar:cart' %}" class="cart_name fl">我的购物车</a>
@@ -64,7 +73,11 @@
 				<span></span>
 				<ul class="subnav">
                     {% for type in kinds %}
+<<<<<<< HEAD
 					    <li><a href="{% url 'goods:list' type.id 1 %}" class="{{ type.logo }}">{{ type.name }}</a></li>
+=======
+					    <li><a href="{% url 'goods:goods_list' type.id %}" class="{{ type.logo }}">{{ type.name }}</a></li>
+>>>>>>> origin/dev
                     {% endfor %}
 				</ul>
 			</div>
@@ -91,8 +104,13 @@
 			<span>|</span>
 			<a href="#">友情链接</a>		
 		</div>
+<<<<<<< HEAD
 		<p>CopyRight © 2020 北京天天生鲜信息技术有限公司 All Rights Reserved</p>
 		<p>电话：010-8888888    京ICP备88888888号</p>
+=======
+		<p>CopyRight © 2016 北京天天生鲜信息技术有限公司 All Rights Reserved</p>
+		<p>电话：010-****888    京ICP备*******8号</p>
+>>>>>>> origin/dev
 	</div>
 {% block bottom_files %}{% endblock bottom_files %}
 </body>
