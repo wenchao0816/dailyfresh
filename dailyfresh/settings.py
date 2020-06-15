@@ -10,11 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
-import os
+import os, sys
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+# sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -37,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'tinymce',
+    'haystack',
     'apps.user',
     'apps.order',
     'apps.goods',
@@ -82,12 +85,16 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'dailyfresh',
-        'HOST': 'localhost',
+        'HOST': '127.0.0.1',
         'PORT': '3306',
         'USER': 'root',
         'PASSWORD': 'root'
     }
 }
+
+
+# django认证系统使用的模型类
+AUTH_USER_MODEL = 'user.User'
 
 
 # Password validation
@@ -128,4 +135,71 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIR = ({BASE_DIR, 'static'})
+STATICFILES_DIR = (os.path.join(BASE_DIR, 'apps/goods/static'))
+
+TINYMCE_DEFAULT_CONFIG = {
+    'theme':'advanced',
+    'width':600,
+    'height':400
+}
+
+# 发送邮件配置
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# smpt服务地址
+EMAIL_HOST = 'smtp.126.com'
+EMAIL_PORT = 25
+# 发送邮件的邮箱
+EMAIL_HOST_USER = 'wenchao2815@126.com'
+# 在邮箱中设置的客户端授权密码
+EMAIL_HOST_PASSWORD = 'TEYMXHNQKVKVBFZZ'
+# 收件人看到的发件人
+EMAIL_FROM = '天天生鲜<wenchao2815@126.com>'
+
+
+# Django的缓存配置
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://172.16.38.128:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    "history": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://172.16.38.128:6379/2",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+# 配置session存储
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+SESSION_COOKIE_AGE = 12*3600
+
+# 登录提交路径
+LOGIN_URL = '/user/login'
+
+# FastDFS的配置文件地址
+CLIENT_CONF_PATH = './utils/fastdfs/client.conf'
+
+# FastDFS服务器连接的nginx的地址
+URL_IP = 'http://172.16.38.128:8888'
+
+# 设置图片的默认上传处理类
+DEFAULT_FILE_STORAGE = 'utils.fastdfs.storage.FDFSStorage'
+
+# 使用haystack全文检索框架配置
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        # 使用whoosh引擎
+        'ENGINE': 'haystack.backends.whoosh_cn_backend.WhooshEngine',
+        # 索引文件路径
+        'PATH': os.path.join(BASE_DIR, 'whoosh_index'),
+    }
+}
+
+# 当添加、修改、删除数据时，自动生成索引
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
