@@ -1,0 +1,88 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block body %}
+	<div class="breadcrumb">
+		<a href="#">全部分类</a>
+		<span>></span>
+		<a href="{% url 'goods:list' type.id 1 %}">{{ type.name }}</a>
+	</div>
+
+	<div class="main_wrap clearfix">
+		<div class="l_wrap fl clearfix">
+			<div class="new_goods">
+				<h3>新品推荐</h3>
+				<ul>
+                    {% for sku in new_goods %}
+                        <li>
+                            <a href="{% url 'goods:detail' sku.id %}"><img src={{ sku.pictures.url }}></a>
+                            <h4><a href="{% url 'goods:detail' sku.id %}">{{ sku.goods_name }}</a></h4>
+                            <div class="prize">￥{{ sku.price }}</div>
+                        </li>
+                    {% endfor %}
+				</ul>
+			</div>
+		</div>
+
+		<div class="r_wrap fr clearfix">
+			<div class="sort_bar">
+				<a href="{% url 'goods:list' type.id 1 %}?sort=id" {% if sort == 'id' %}class="active"{% endif %}>默认</a>
+				<a href="{% url 'goods:list' type.id 1 %}?sort=price"{% if sort == 'price' %}class="active"{% endif %}>价格</a>
+				<a href="{% url 'goods:list' type.id 1 %}?sort=sales_volume"{% if sort == 'sales_volume' %}class="active"{% endif %}>人气</a>
+			</div>
+
+			<ul class="goods_type_list clearfix">
+                {% for unit_goods in sku_pages.object_list %}
+                    <li>
+                        <a href={% url 'goods:detail' unit_goods.id %}><img src={{ unit_goods.pictures.url }}></a>
+                        <h4><a href="{% url 'goods:detail' unit_goods.id %}">{{ unit_goods.goods_name }}</a></h4>
+                        <div class="operate">
+                            <span class="prize">￥{{ unit_goods.price }}</span>
+                            <span class="unit">{{ unit_goods.price }}/{{ unit_goods.unit }}</span>
+                            <a href="javascript:;" class="add_goods" goods_id="{{ unit_goods.id }}" title="加入购物车"></a>
+                        </div>
+                    </li>
+                {% endfor %}
+			</ul>
+
+			<div class="pagenation">
+                {% if sku_pages.has_previous %}
+                    <a href="{% url 'goods:list' type.id sku_pages.previous_page_number %}?sort={{ sort }}">上一页</a>
+                {% endif %}
+                {% for num in pages %}
+                    {% if num == page %}
+                        <a href="#" class="active">{{ num }}</a>
+                    {% else %}
+                        <a href="{% url 'goods:list' type.id num %}?sort={{ sort }}">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
+                {% if sku_pages.has_next %}
+                    <a href="{% url 'goods:list' type.id sku_pages.next_page_number %}?sort={{ sort }}">下一页></a>
+                {% endif %}
+			</div>
+		</div>
+	</div>
+    {% csrf_token %}
+{% endblock body %}
+{% block bottom_files %}
+    <script src="{% static 'js/jquery-1.12.4.min.js' %}"></script>
+    <script>
+    $('.add_goods').click(function () {
+            var goods_id = $(this).attr('goods_id')
+            var count = 1
+            var csrf = $("input[name='csrfmiddlewaretoken']").val()
+            var data = {
+                'goods_id': goods_id,
+                'goods_num': count,
+                'csrfmiddlewaretoken': csrf
+            }
+            $.post('/goodscar/addcart', data, function (data) {
+                if(data.code === 200){
+                    $('.goods_count').text(data.goods_count)
+                }
+                else{
+                    alert(data.errmsg)
+                }
+            })
+        })
+    </script>
+{% endblock bottom_files %}

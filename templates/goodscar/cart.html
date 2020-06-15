@@ -1,0 +1,175 @@
+{% extends 'base/base_goods_car.html' %}
+{% load static %}
+{% block body %}
+	<div class="total_count">全部商品<em>{{ total_count }}</em>件</div>
+	<ul class="cart_list_th clearfix">
+		<li class="col01">商品名称</li>
+		<li class="col02">商品单位</li>
+		<li class="col03">商品价格</li>
+		<li class="col04">数量</li>
+		<li class="col05">小计</li>
+		<li class="col06">操作</li>
+	</ul>
+    <form action="{% url 'order:place' %}" method="post">
+    {% csrf_token %}
+    {% for goods in goods_li %}
+        <ul class="cart_list_td clearfix">
+            <li class="col01"><input type="checkbox" name="goods_ids" value="{{ goods.id }}" checked></li>
+            <li class="col02"><img src={{ goods.pictures.url }}></li>
+            <li class="col03">{{ goods.goods_name }}<br><em>{{ goods.price }}元/{{ goods.unit }}</em></li>
+            <li class="col04">{{ goods.unit }}</li>
+            <li class="col05">{{ goods.price }}元</li>
+            <li class="col06">
+                <div class="num_add" goods_id="{{ goods.id }}">
+                    <a href="javascript:;" class="minus fl">-</a>
+                    <input type="text" class="num_show fl" value={{ goods.num }}>
+                    <a href="javascript:;"  class="add fl">+</a>
+                </div>
+            </li>
+            <li class="col07">{{ goods.amount }}元</li>
+            <li class="col08"><a href="javascript:;" goods_id="{{ goods.id }}" class="num_del">删除</a></li>
+        </ul>
+    {% empty %}
+        <ul class="cart_list_td clearfix">购物车还没有商品哦！</ul>
+    {% endfor %}
+	<ul class="settlements">
+		<li class="col01"><input type="checkbox" name="" checked=""></li>
+		<li class="col02">全选</li>
+		<li class="col03">合计(不含运费)：<span>¥</span><em>{{ total_amount }}元</em><br>共计<b>{{ total_count }}</b>件商品</li>
+		<li class="col04"><input type="submit" value="去结算"></li>
+	</ul>
+    </form>
+    {% csrf_token %}
+{% endblock body %}
+{% block bottom_files %}
+<script type="text/javascript" src="{% static 'js/jquery-1.12.4.min.js' %}"></script>
+<script type="text/javascript">
+    {# 重新计算商品小计、总价格、总数量 #}
+    function get_total_money() {
+        var total_count = 0
+        $('.cart_list_td').each(function () {
+            var price = $(this).children('.col05').text()
+            price = parseFloat(price.substr(0, price.length-1))
+            var count = $(this).find('.num_show').val()
+            count = parseInt(count)
+            var total_money = price * count
+            $(this).children('.col07').text(total_money.toFixed(2)+'元')
+            total_count += count
+            $('.total_count').children('em').text(total_count)
+        })
+        var total_count = 0
+        var total_money = 0
+        $('.cart_list_td').find(':checked').each(function () {
+            var count = $(this).parents('.cart_list_td').find('.num_show').val()
+            var money = $(this).parents('.cart_list_td').find('.col07').text()
+            money = money.substr(0, money.length-1)
+            total_count += parseInt(count)
+            total_money += parseFloat(money)
+        })
+        $('.settlements').find('em').text(total_money.toFixed(2)+'元')
+        $('.settlements').find('b').text(total_count)
+    }
+
+    {# 商品增加 #}
+    $('.add').each(function () {
+        $(this).click(function () {
+            var goods_num = $(this).prev().val()
+            goods_num = parseInt(goods_num) + 1
+            $(this).prev().val(goods_num)
+            var goods_id = $(this).parents('.num_add').attr('goods_id')
+            var add = $(this)
+            update_goods_num(add, goods_id, goods_num)
+        })
+    })
+
+    {# 商品减少 #}
+    $('.minus').each(function () {
+        $(this).click(function () {
+            var goods_num = $(this).next().val()
+            goods_num = parseInt(goods_num) - 1
+            if(goods_num < 1){
+                goods_num = 1
+            }
+            $(this).next().val(goods_num)
+            var goods_id = $(this).parents('.num_add').attr('goods_id')
+            update_goods_num($(this), goods_id, goods_num)
+        })
+    })
+
+    {# 手动输入数量 #}
+    $('.num_show').each(function () {
+        $(this).blur(function () {
+            var goods_num = $(this).val()
+            if(isNaN(goods_num) || goods_num < 1 || goods_num.trim() === ''){
+                goods_num = 1
+            }
+            $(this).val(parseInt(goods_num))
+            var goods_id = $(this).parents('.num_add').attr('goods_id')
+            update_goods_num($(this), goods_id, parseInt(goods_num))
+        })
+    })
+
+    {# 全选按钮 #}
+    $('.settlements').find(':checkbox').change(function () {
+        var is_checked = $(this).prop('checked')
+        $('.cart_list_td').each(function () {
+            $(this).find(':checkbox').prop('checked', is_checked)
+            get_total_money()
+        })
+    })
+
+    {# 商品明细选择按钮 #}
+    $('.cart_list_td').find(':checkbox').each(function () {
+        $(this).change(function () {
+            var total_checkbox = $('.cart_list_td').length
+            var checked_checkbox = $('.cart_list_td').find(':checked').length
+            var is_checked = true
+            if(checked_checkbox < total_checkbox){
+                is_checked = false
+            }
+            $('.settlements').find(':checkbox').prop('checked', is_checked)
+            get_total_money()
+        })
+    })
+
+    {# 利用ajax向服务器提交数据 #}
+    function update_goods_num(name, goods_id, goods_num) {
+        var csrf = $("input[name='csrfmiddlewaretoken']").val()
+        var data = {
+            'goods_id': goods_id,
+            'goods_num': goods_num,
+            'csrfmiddlewaretoken': csrf
+        }
+        $.post('/goodscar/update', data, function (data) {
+            if(data.code === 200){
+
+            }else if(data.code === 204){
+                alert(data.errmsg)
+                name.parents('.num_add').children('.num_show').val(data.goods_num)
+            }else{
+                alert(data.errmsg)
+            }
+            get_total_money()
+
+        })
+    }
+
+    {# 删除商品信息 #}
+    $('.num_del').each(function () {
+        $(this).click(function () {
+            var goods_id = $(this).attr('goods_id')
+            var sku_ul = $(this).parents('ul')
+            var csrf = $('input[name="csrfmiddlewaretoken"]').val()
+            $.post('/goodscar/delete', {'goods_id': goods_id, 'csrfmiddlewaretoken':csrf}, function (data) {
+                if(data.code===200){
+                    sku_ul.remove()
+                    get_total_money()
+                }else{
+                    alert(data.errmsg)
+                }
+            })
+        })
+    })
+
+</script>
+{% endblock bottom_files %}
